@@ -88,9 +88,11 @@
 			/>
 			<p class=" ml-2 grow flex-1">Divide</p>
 		</div>
-    <p class="opacity-75">(Divide is slow, and useless in the game, but if you insist..)</p>
+    <p class="opacity-60">(Divide is slow, and useless in the game, but if you insist..)</p>
 
     <button on:click={calculate} class="btn variant-ghost-primary mt-4 w-full">Calculate</button>
+    <p class="opacity-60 text-sm mt-1">Can be laggy, with very very large numbers.</p>
+    <p  class="opacity-60 text-sm">If you have performance suggestions, feel free to <a class="underline" target="_blank" href="https://github.com/LiamKrenn/beltmatic/pulls">open a PR.</a></p>
 
     {#if result.length > 0}
       <h3 class="h3 mt-4 mb-1">Result:</h3>
