@@ -23,14 +23,14 @@ export function leastSteps(target, max_src, allowedOperators) {
 			case '/':
 				return b !== 0 ? a / b : null;
 			case '^':
-				return a > 0 && b >= 0 ? Math.pow(a, b) : null;
+				return Math.pow(a, b);
 			default:
 				return null;
 		}
 	}
 	let i = 0;
 
-  let calc_count = 0;
+	let calc_count = 0;
 	while (queue.length > 0) {
 		i++;
 		if (i > 9999999) {
@@ -38,7 +38,7 @@ export function leastSteps(target, max_src, allowedOperators) {
 		}
 		let [currentValue, steps, stepsList] = queue.shift();
 		if (currentValue === target) {
-      console.log(calc_count);
+			console.log('Calculation count: ' + calc_count);
 			return stepsList.slice(1);
 		}
 		for (let num of allowedNumbers) {
@@ -50,29 +50,27 @@ export function leastSteps(target, max_src, allowedOperators) {
 					continue;
 				}
 
-        if ((operator === '-' || operator === '/') && (currentValue < target)) {
-          continue;
-        }
+				if ((operator === '-' || operator === '/') && currentValue < target) {
+					continue;
+				}
 
 				if (num < 0 || currentValue < 0) {
 					continue;
 				}
 
-        if (num === 1 && (operator === '*' || operator === '/' || operator === '^')) {
-          continue;
-        }
-
-				let newValue = applyOperator(currentValue, num, operator);
-        calc_count++;
-
-				if (newValue > (target * 1.2 + max_src) || newValue === null || visited.has(newValue)) {
+				if (num === 1 && (operator === '*' || operator === '/' || operator === '^')) {
 					continue;
 				}
-				if (newValue !== null && !visited.has(newValue)) {
-					visited.add(newValue);
-					let newStepsList = stepsList.concat([[currentValue, num, operator, newValue]]);
-					queue.push([newValue, steps + 1, newStepsList]);
+
+				let newValue = applyOperator(currentValue, num, operator);
+				calc_count++;
+
+				if (newValue > target * 1.2 + max_src || newValue === null || visited.has(newValue)) {
+					continue;
 				}
+				visited.add(newValue);
+				let newStepsList = stepsList.concat([[currentValue, num, operator, newValue]]);
+				queue.push([newValue, steps + 1, newStepsList]);
 			}
 		}
 	}
