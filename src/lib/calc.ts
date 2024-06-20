@@ -1,7 +1,7 @@
 // Using a basic A* algorithm to find the least amount of steps to reach a target number
 
 // Performance test values: 4682 - 15 - ['+', '-', '*', '^']
-// Current performance - Operation Count = 48k
+// Current performance - Operation Count = 8.8k
 
 import { PriorityQueue } from '@datastructures-js/priority-queue';
 
@@ -20,7 +20,13 @@ export function leastSteps(target: number, max_src: number, allowedOperators: st
 
 	function fValueEvalution(a: QueueItem, b: QueueItem) {
 		// TODO: Optimize
-		return a.steps - b.steps;
+		// This is a very basic heuristic, it should be improved
+		// The idea is to prioritize the values that are closer to the target
+		// 2 is a magic number that seems to work well, with lower values (0-50k)
+		// But with higher values (200k) it seems like 1.5 is better
+		let a_dif = (1 - Math.abs(target - a.value) / target) * 2;
+		let b_dif = (1 - Math.abs(target - b.value) / target) * 2;
+		return (a.steps - a_dif) - (b.steps - b_dif);
 	}
 
 	let queue = new PriorityQueue<QueueItem>(fValueEvalution);
@@ -44,7 +50,7 @@ export function leastSteps(target: number, max_src: number, allowedOperators: st
 	}
 
 	function skipUnnecessaryOperators(value: number, currentValue: number, operator: string) {
-    // Skip if the value is larger than the target and the operator is +, *, or ^
+		// Skip if the value is larger than the target and the operator is +, *, or ^
 		if (
 			(operator === '+' || operator === '*' || operator === '^') &&
 			(currentValue > target || value > target)
@@ -52,17 +58,17 @@ export function leastSteps(target: number, max_src: number, allowedOperators: st
 			return true;
 		}
 
-    // Skip if the value is smaller than the target and the operator is - or /
+		// Skip if the value is smaller than the target and the operator is - or /
 		if ((operator === '-' || operator === '/') && currentValue < target) {
 			return true;
 		}
 
-    // Skip if the value is negative
+		// Skip if the value is negative
 		if (value < 0 || currentValue < 0) {
 			return true;
 		}
 
-    // Skip if the value is 1 and the operator is *, /, or ^
+		// Skip if the value is 1 and the operator is *, /, or ^
 		if (value === 1 && (operator === '*' || operator === '/' || operator === '^')) {
 			return true;
 		}
@@ -74,7 +80,7 @@ export function leastSteps(target: number, max_src: number, allowedOperators: st
 		let element = queue.dequeue();
 		for (let num of allowedNumbers) {
 			for (let operator of allowedOperators) {
-        // Skip unnecessary calculations
+				// Skip unnecessary calculations
 				if (skipUnnecessaryOperators(num, element.value, operator)) {
 					continue;
 				}
@@ -82,7 +88,7 @@ export function leastSteps(target: number, max_src: number, allowedOperators: st
 				let newValue = applyOperator(element.value, num, operator) || -1;
 				calc_count++;
 
-        // if the value is way overshooting, skip it (happens quite often with ^)
+				// if the value is way overshooting, skip it (happens quite often with ^)
 				if (newValue > target * 1.2 + max_src || newValue === null || visited.has(newValue)) {
 					continue;
 				}
