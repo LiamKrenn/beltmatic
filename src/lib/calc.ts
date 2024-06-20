@@ -13,10 +13,10 @@ type QueueItem = {
 };
 
 export function leastSteps(target: number, max_src: number, allowedOperators: string[]) {
+	// Allowed numbers are 1 to max_src, excluding 10, as it can't spawn
 	const allowedNumbers = Array.from({ length: max_src }, (_, i) => i + 1).filter(
-		(num) => num !== 10 // 10 can't spawn afaik
+		(num) => num !== 10
 	);
-	const visited = new Set();
 
 	function fValueEvalution(a: QueueItem, b: QueueItem) {
 		// TODO: Optimize
@@ -26,11 +26,13 @@ export function leastSteps(target: number, max_src: number, allowedOperators: st
 		// But with higher values (200k) it seems like 1.5 is better
 		let a_dif = (1 - Math.abs(target - a.value) / target) * 2;
 		let b_dif = (1 - Math.abs(target - b.value) / target) * 2;
-		return (a.steps - a_dif) - (b.steps - b_dif);
+		return a.steps - a_dif - (b.steps - b_dif);
 	}
 
+	const visited = new Set();
 	let queue = new PriorityQueue<QueueItem>(fValueEvalution);
 	queue.enqueue({ value: 0, steps: 0, operator: '', stepsList: [] });
+	let calc_count = 0;
 
 	function applyOperator(a: number, b: number, operator: string) {
 		switch (operator) {
@@ -50,6 +52,7 @@ export function leastSteps(target: number, max_src: number, allowedOperators: st
 	}
 
 	function skipUnnecessaryOperators(value: number, currentValue: number, operator: string) {
+		// TODO: This could also be optimized, but there are bigger performance improvements in fValueEvalution()
 		// Skip if the value is larger than the target and the operator is +, *, or ^
 		if (
 			(operator === '+' || operator === '*' || operator === '^') &&
@@ -74,11 +77,12 @@ export function leastSteps(target: number, max_src: number, allowedOperators: st
 		}
 	}
 
-	let calc_count = 0;
-
 	while (queue.size() > 0) {
 		let element = queue.dequeue();
 		for (let num of allowedNumbers) {
+			// element.value is the current value
+			// num will be applied to the current value with the operator
+			// example: element.value - num = newValue
 			for (let operator of allowedOperators) {
 				// Skip unnecessary calculations
 				if (skipUnnecessaryOperators(num, element.value, operator)) {
@@ -89,15 +93,21 @@ export function leastSteps(target: number, max_src: number, allowedOperators: st
 				calc_count++;
 
 				// if the value is way overshooting, skip it (happens quite often with ^)
-				if (newValue > target * 1.2 + max_src || newValue === null || visited.has(newValue)) {
+				// or if the value is negative, or if the value has already been visited
+				if (newValue > target * 1.2 + max_src || newValue < 0 || visited.has(newValue)) {
 					continue;
 				}
+
 				visited.add(newValue);
 				let newStepsList = element.stepsList.concat([[element.value, num, operator, newValue]]);
+
+				// If the new value is the target, return the steps list
 				if (newValue === target) {
 					console.log('Calculation count: ' + calc_count);
 					return newStepsList.slice(1);
 				}
+
+				// Add the new value to the queue
 				queue.enqueue({
 					value: newValue,
 					steps: element.steps + 1,
