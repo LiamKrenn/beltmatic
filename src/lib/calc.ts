@@ -3,6 +3,8 @@
 // Based on https://info.otypes.de/beltmatic/
 // a few improvements, if you have any suggestions, open a PR
 
+// Performance test values 4682 - 15 - ['+', '-', '*', '^']
+
 export function leastSteps(target, max_src, allowedOperators) {
 	const allowedNumbers = Array.from({ length: max_src }, (_, i) => i + 1).filter(
 		(num) => num !== 10 // 10 can't spawn afaik
@@ -27,13 +29,16 @@ export function leastSteps(target, max_src, allowedOperators) {
 		}
 	}
 	let i = 0;
+
+  let calc_count = 0;
 	while (queue.length > 0) {
 		i++;
-		if (i > 999999) {
+		if (i > 9999999) {
 			return stepsList.slice(1);
 		}
 		let [currentValue, steps, stepsList] = queue.shift();
 		if (currentValue === target) {
+      console.log(calc_count);
 			return stepsList.slice(1);
 		}
 		for (let num of allowedNumbers) {
@@ -45,12 +50,22 @@ export function leastSteps(target, max_src, allowedOperators) {
 					continue;
 				}
 
+        if ((operator === '-' || operator === '/') && (currentValue < target)) {
+          continue;
+        }
+
 				if (num < 0 || currentValue < 0) {
 					continue;
 				}
-				let newValue = applyOperator(currentValue, num, operator);
 
-				if (newValue > target * 1.2 || newValue === null || visited.has(newValue)) {
+        if (num === 1 && (operator === '*' || operator === '/' || operator === '^')) {
+          continue;
+        }
+
+				let newValue = applyOperator(currentValue, num, operator);
+        calc_count++;
+
+				if (newValue > (target * 1.2 + max_src) || newValue === null || visited.has(newValue)) {
 					continue;
 				}
 				if (newValue !== null && !visited.has(newValue)) {
