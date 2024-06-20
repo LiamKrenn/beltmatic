@@ -25,7 +25,6 @@
 		if (operators.divide) operator_array.push('/');
 		if (operators.exponentiate) operator_array.push('^');
 
-    
 		result = leastSteps(targetNumber, highestExtractionSource, operator_array);
 		calculating = false;
 	}
@@ -62,6 +61,7 @@
 				bind:checked={operators.plus}
 				class="input h-4 w-4 rounded-sm"
 				type="checkbox"
+				disabled
 				placeholder="9"
 			/>
 			<p class=" ml-2 grow flex-1">Plus</p>
