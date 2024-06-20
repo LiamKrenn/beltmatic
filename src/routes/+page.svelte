@@ -25,6 +25,7 @@
 		if (operators.divide) operator_array.push('/');
 		if (operators.exponentiate) operator_array.push('^');
 
+    
 		result = leastSteps(targetNumber, highestExtractionSource, operator_array);
 		calculating = false;
 	}

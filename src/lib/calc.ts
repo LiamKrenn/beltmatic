@@ -1,18 +1,23 @@
-// @ts-nocheck
+// Using a basic A* algorithm to find the least amount of steps to reach a target number
 
-// Based on https://info.otypes.de/beltmatic/
-// a few improvements, if you have any suggestions, open a PR
+// Performance test values: 4682 - 15 - ['+', '-', '*', '^']
+// Current performance - Operation Count = 142.9k
 
-// Performance test values 4682 - 15 - ['+', '-', '*', '^']
+import { PriorityQueue } from '@datastructures-js/priority-queue';
 
-export function leastSteps(target, max_src, allowedOperators) {
+export function leastSteps(target: number, max_src: number, allowedOperators: string[]) {
 	const allowedNumbers = Array.from({ length: max_src }, (_, i) => i + 1).filter(
 		(num) => num !== 10 // 10 can't spawn afaik
 	);
 	const visited = new Set();
-	let queue = [[0, 0, []]];
+	let queue = new PriorityQueue<{
+		value: number;
+		steps: number;
+		operator: string;
+		stepsList: any[];
+	}>((a, b) => a.steps - b.steps);
 
-	function applyOperator(a, b, operator) {
+	function applyOperator(a: number, b: number, operator: string) {
 		switch (operator) {
 			case '+':
 				return a + b;
@@ -28,33 +33,34 @@ export function leastSteps(target, max_src, allowedOperators) {
 				return null;
 		}
 	}
-	let i = 0;
 
 	let calc_count = 0;
-	while (queue.length > 0) {
-		i++;
-		if (i > 9999999) {
-			return stepsList.slice(1);
-		}
-		let [currentValue, steps, stepsList] = queue.shift();
-		if (currentValue === target) {
+
+	queue.enqueue({ value: 0, steps: 0, operator: '', stepsList: [] });
+	console.log('init');
+
+	while (queue.size() > 0) {
+		let queue_el = queue.dequeue();
+		console.log(queue_el);
+
+		if (queue_el.value === target) {
 			console.log('Calculation count: ' + calc_count);
-			return stepsList.slice(1);
+			return queue_el.stepsList.slice(1);
 		}
 		for (let num of allowedNumbers) {
 			for (let operator of allowedOperators) {
 				if (
 					(operator === '+' || operator === '*' || operator === '^') &&
-					(currentValue > target || num > target)
+					(queue_el.value > target || num > target)
 				) {
 					continue;
 				}
 
-				if ((operator === '-' || operator === '/') && currentValue < target) {
+				if ((operator === '-' || operator === '/') && queue_el.value < target) {
 					continue;
 				}
 
-				if (num < 0 || currentValue < 0) {
+				if (num < 0 || queue_el.value < 0) {
 					continue;
 				}
 
@@ -62,15 +68,20 @@ export function leastSteps(target, max_src, allowedOperators) {
 					continue;
 				}
 
-				let newValue = applyOperator(currentValue, num, operator);
+				let newValue = applyOperator(queue_el.value, num, operator) || -1;
 				calc_count++;
 
 				if (newValue > target * 1.2 + max_src || newValue === null || visited.has(newValue)) {
 					continue;
 				}
 				visited.add(newValue);
-				let newStepsList = stepsList.concat([[currentValue, num, operator, newValue]]);
-				queue.push([newValue, steps + 1, newStepsList]);
+				let newStepsList = queue_el.stepsList.concat([[queue_el.value, num, operator, newValue]]);
+				queue.enqueue({
+					value: newValue,
+					steps: queue_el.steps + 1,
+					operator: operator,
+					stepsList: newStepsList
+				});
 			}
 		}
 	}

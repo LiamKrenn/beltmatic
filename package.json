@@ -39,6 +39,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@datastructures-js/priority-queue": "^6.3.1",
     "lucide-svelte": "^0.395.0"
   }
 }
