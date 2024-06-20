@@ -98,11 +98,12 @@
 				bind:checked={operators.divide}
 				class="input h-4 w-4 rounded-sm"
 				type="checkbox"
+        disabled
 				placeholder="9"
 			/>
 			<p class=" ml-2 grow flex-1">Divide</p>
 		</div>
-		<p class="opacity-60">(Divide is slow, and useless in the game, but if you insist..)</p>
+		<p class="opacity-60">(Divide is slow, and useless in the game and due to<br/> the way the algorithm works, will never be used)</p>
 
 		<button on:click={calculate} class="btn variant-ghost-primary mt-4 w-full">Calculate</button>
 		<p class="opacity-60 text-sm mt-1">Can be laggy, with very very large numbers.</p>

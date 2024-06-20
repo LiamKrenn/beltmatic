@@ -94,7 +94,10 @@ export function leastSteps(target: number, max_src: number, allowedOperators: st
 
 				// if the value is way overshooting, skip it (happens quite often with ^)
 				// or if the value is negative, or if the value has already been visited
-				if (newValue > target * 1.2 + max_src || newValue < 0 || visited.has(newValue)) {
+				//
+				// target + max_src is to ensure minus is viable, and ensures performance
+				// but this makes division useless
+				if (newValue > target + max_src || newValue < 0 || visited.has(newValue)) {
 					continue;
 				}
 
