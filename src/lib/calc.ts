@@ -20,7 +20,6 @@ export function leastSteps(target: number, max_src: number, allowedOperators: st
 
 	function fValueEvalution(a: QueueItem, b: QueueItem) {
 		// TODO: Optimize
-		// This is a very basic heuristic, it should be improved
 		// The idea is to prioritize the values that are closer to the target
 		// 2 is a magic number that seems to work well, with lower values (0-50k)
 		// But with higher values (200k) it seems like 1.5 is better
@@ -107,7 +106,7 @@ export function leastSteps(target: number, max_src: number, allowedOperators: st
 				// If the new value is the target, return the steps list
 				if (newValue === target) {
 					console.log('Calculation count: ' + calc_count);
-					return newStepsList.slice(1);
+					return newStepsList;
 				}
 
 				// Add the new value to the queue

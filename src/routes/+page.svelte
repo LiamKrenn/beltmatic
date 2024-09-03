@@ -13,7 +13,7 @@
 	};
 	let calculating = false;
 
-	let result: string | any[] = [];
+	let result: any[] = [];
 
 	async function calculate() {
 		result = [];
@@ -98,12 +98,15 @@
 				bind:checked={operators.divide}
 				class="input h-4 w-4 rounded-sm"
 				type="checkbox"
-        disabled
+				disabled
 				placeholder="9"
 			/>
 			<p class=" ml-2 grow flex-1">Divide</p>
 		</div>
-		<p class="opacity-60">(Divide is slow, and useless in the game and due to<br/> the way the algorithm works, will never be used)</p>
+		<p class="opacity-60">
+			(Divide is slow, and useless in the game and due to<br /> the way the algorithm works, will never
+			be used)
+		</p>
 
 		<button on:click={calculate} class="btn variant-ghost-primary mt-4 w-full">Calculate</button>
 		<p class="opacity-60 text-sm mt-1">Can be laggy, with very very large numbers.</p>
@@ -117,7 +120,12 @@
 
 		{#if result.length > 0}
 			<h3 class="h3 mt-4 mb-1">Result:</h3>
-			{#each result as step}
+			<h4 class="h4 !font-normal">Extractors Needed:</h4>
+			<div class="card variant-glass-primary p-2 my-1 flex items-center justify-center">
+				{result.map((subArray) => subArray[1]).join(' - ')}
+			</div>
+			<h4 class="h4 !font-normal">Steps:</h4>
+			{#each result.length == 1 ? result : result.slice(1) as step}
 				<div class="card p-2 my-1 flex items-center justify-center">
 					<p>{step[0]} {step[2]} {step[1]} = {step[3]}</p>
 				</div>
