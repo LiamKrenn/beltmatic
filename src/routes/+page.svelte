@@ -137,6 +137,16 @@
 			>
 		</p>
 
+		<a
+			target="_blank"
+			href="https://buymeacoffee.com/liamkrenn"
+			class="btn variant-ghost-warning mt-4 w-full">Support me!</a
+		>
+		<p class="opacity-60 text-sm mt-1 max-w-96">
+			This tool is and will always be free! If you'd like to support its development, your help is
+			greatly appreciated!
+		</p>
+
 		{#if result.length > 0}
 			<h3 class="h3 mt-4 mb-1">Result:</h3>
 			<h4 class="h4 !font-normal">Extractors Needed:</h4>
