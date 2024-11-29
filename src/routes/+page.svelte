@@ -11,6 +11,7 @@
 		divide: false,
 		exponentiate: true
 	};
+	let reuse_generated_values = true;
 	let calculating = false;
 
 	let result: any[] = [];
@@ -25,7 +26,12 @@
 		if (operators.divide) operator_array.push('/');
 		if (operators.exponentiate) operator_array.push('^');
 
-		result = leastSteps(targetNumber, highestExtractionSource, operator_array);
+		result = leastSteps(
+			targetNumber,
+			highestExtractionSource,
+			operator_array,
+			reuse_generated_values
+		);
 		calculating = false;
 	}
 </script>
@@ -106,6 +112,19 @@
 		<p class="opacity-60">
 			(Divide is slow, and useless in the game and due to<br /> the way the algorithm works, will never
 			be used)
+		</p>
+
+		<div class="flex items-center mt-1 w-[70%]">
+			<input
+				bind:checked={reuse_generated_values}
+				class="input h-4 w-4 rounded-sm"
+				type="checkbox"
+				placeholder="9"
+			/>
+			<p class=" ml-2 grow flex-1">Reuse Generated Values (new!)</p>
+		</div>
+		<p class="opacity-60">
+			Can slow down the calculation, but can also generate shorter solutions!
 		</p>
 
 		<button on:click={calculate} class="btn variant-ghost-primary mt-4 w-full">Calculate</button>

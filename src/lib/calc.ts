@@ -12,7 +12,12 @@ type QueueItem = {
 	stepsList: [number, number, string, number][];
 };
 
-export function leastSteps(target: number, max_src: number, allowedOperators: string[]) {
+export function leastSteps(
+	target: number,
+	max_src: number,
+	allowedOperators: string[],
+	reuse_generated_values: boolean = false
+) {
 	// Allowed numbers are 1 to max_src, excluding 10, as it can't spawn
 	const allowedNumbers = Array.from({ length: max_src }, (_, i) => i + 1).filter(
 		(num) => num !== 10
@@ -78,7 +83,12 @@ export function leastSteps(target: number, max_src: number, allowedOperators: st
 
 	while (queue.size() > 0) {
 		let element = queue.dequeue();
-		for (let num of allowedNumbers) {
+
+		const numbers = reuse_generated_values
+			? element.stepsList.map((step) => step[3]).concat(allowedNumbers)
+			: allowedNumbers;
+
+		for (let num of numbers) {
 			// element.value is the current value
 			// num will be applied to the current value with the operator
 			// example: element.value - num = newValue
