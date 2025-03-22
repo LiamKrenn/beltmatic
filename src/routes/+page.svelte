@@ -11,6 +11,7 @@
 		divide: false,
 		exponentiate: true
 	};
+	let reuse_generated_values = true;
 	let calculating = false;
 
 	let result: any[] = [];
@@ -25,7 +26,12 @@
 		if (operators.divide) operator_array.push('/');
 		if (operators.exponentiate) operator_array.push('^');
 
-		result = leastSteps(targetNumber, highestExtractionSource, operator_array);
+		result = leastSteps(
+			targetNumber,
+			highestExtractionSource,
+			operator_array,
+			reuse_generated_values
+		);
 		calculating = false;
 	}
 </script>
@@ -108,6 +114,19 @@
 			be used)
 		</p>
 
+		<div class="flex items-center mt-1 w-[70%]">
+			<input
+				bind:checked={reuse_generated_values}
+				class="input h-4 w-4 rounded-sm"
+				type="checkbox"
+				placeholder="9"
+			/>
+			<p class=" ml-2 grow flex-1">Reuse Generated Values (new!)</p>
+		</div>
+		<p class="opacity-60">
+			Can slow down the calculation, but can also generate shorter solutions!
+		</p>
+
 		<button on:click={calculate} class="btn variant-ghost-primary mt-4 w-full">Calculate</button>
 		<p class="opacity-60 text-sm mt-1">Can be laggy, with very very large numbers.</p>
 		<p class="opacity-60 text-sm">
@@ -116,6 +135,16 @@
 				target="_blank"
 				href="https://github.com/LiamKrenn/beltmatic/pulls">open a PR.</a
 			>
+		</p>
+
+		<a
+			target="_blank"
+			href="https://buymeacoffee.com/liamkrenn"
+			class="btn variant-ghost-warning mt-4 w-full">Support me!</a
+		>
+		<p class="opacity-60 text-sm mt-1 max-w-96">
+			This tool is and will always be free! If you'd like to support its development, your help is
+			greatly appreciated!
 		</p>
 
 		{#if result.length > 0}
