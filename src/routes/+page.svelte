@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { leastSteps as leastStepsReuse } from '$lib/calc_opt2';
 	import { leastSteps } from '$lib/calc_opt3';
 	import { RefreshCw } from 'lucide-svelte';
 
@@ -11,7 +12,7 @@
 		divide: false,
 		exponentiate: true
 	};
-	let reuse_generated_values = true;
+	let reuse_generated_values = false;
 	let calculating = false;
 
 	let result: any[] = [];
@@ -26,12 +27,17 @@
 		if (operators.divide) operator_array.push('/');
 		if (operators.exponentiate) operator_array.push('^');
 
-		result = leastSteps(
-			targetNumber,
-			highestExtractionSource,
-			operator_array,
-			reuse_generated_values
-		);
+		if (reuse_generated_values) {
+			result = leastStepsReuse(
+				targetNumber,
+				highestExtractionSource,
+				operator_array,
+				reuse_generated_values
+			);
+		} else {
+			result = leastSteps(targetNumber, highestExtractionSource, operator_array);
+		}
+
 		calculating = false;
 	}
 </script>
@@ -114,17 +120,17 @@
 			be used)
 		</p>
 
-		<div class="flex items-center mt-1 w-[70%]">
+		<div class="flex items-center mt-4 w-[90%]">
 			<input
 				bind:checked={reuse_generated_values}
 				class="input h-4 w-4 rounded-sm"
 				type="checkbox"
-				placeholder="9"
 			/>
-			<p class=" ml-2 grow flex-1">Reuse Generated Values (new!)</p>
+			<p class=" ml-2 grow flex-1">Reuse Generated Values (not recommended)</p>
 		</div>
-		<p class="opacity-60">
-			Can slow down the calculation, but can also generate shorter solutions!
+		<p class="opacity-60 mb-2">
+			Uses a slower algorithm, but in <u>very very rare</u> cases <br /> can generate a solution
+			with less steps.<br />
 		</p>
 
 		<button on:click={calculate} class="btn variant-ghost-primary mt-4 w-full">Calculate</button>
@@ -153,7 +159,7 @@
 			<div class="card variant-glass-primary p-2 my-1 flex items-center justify-center">
 				{result.map((subArray) => subArray[1]).join(' - ')}
 			</div>
-			<h4 class="h4 !font-normal">Steps:</h4>
+			<h4 class="h4 !font-normal">Steps ({result.length - 1}):</h4>
 			{#each result.length == 1 ? result : result.slice(1) as step}
 				<div class="card p-2 my-1 flex items-center justify-center">
 					<p>{step[0]} {step[2]} {step[1]} = {step[3]}</p>

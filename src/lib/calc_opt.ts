@@ -4,7 +4,12 @@ type QueueItem = {
 	stepsList: [number, number, string, number][];
 };
 
-export function leastSteps(target: number, max_src: number, allowedOperators: string[]) {
+export function leastSteps(
+	target: number,
+	max_src: number,
+	allowedOperators: string[],
+	reuse_generated_values: boolean = false
+) {
 	const allowedNumbers = Array.from({ length: max_src }, (_, i) => i + 1).filter(
 		(num) => num !== 10
 	);
@@ -79,7 +84,12 @@ export function leastSteps(target: number, max_src: number, allowedOperators: st
 		let forwardSize = forwardQueue.length;
 		for (let i = 0; i < forwardSize; i++) {
 			const element = forwardQueue.shift()!;
-			for (const num of allowedNumbers) {
+
+			const numbers = reuse_generated_values
+				? element.stepsList.map((step) => step[3]).concat(allowedNumbers)
+				: allowedNumbers;
+
+			for (const num of numbers) {
 				for (const operator of allowedOperators) {
 					if (skipForward(element.value, operator)) continue;
 					const newValue = applyOperator(element.value, num, operator);
