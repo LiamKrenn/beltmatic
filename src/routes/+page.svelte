@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { leastSteps } from '$lib/calc';
+	import { leastSteps } from '$lib/calc_opt3';
 	import { RefreshCw } from 'lucide-svelte';
 
 	let targetNumber: any;
