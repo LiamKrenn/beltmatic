@@ -83,7 +83,11 @@ export function leastSteps(target: number, max_src: number, allowedOperators: st
 		const path: [number, number, string, number][] = [];
 		let current: QueueItem | null = meetNode;
 		while (current && current.parent) {
-			path.push([current.parent.value, current.operand!, current.operator!, current.value]);
+			if (isForward) {
+				path.push([current.parent.value, current.operand!, current.operator!, current.value]);
+			} else {
+				path.push([current.value, current.operand!, current.operator!, current.parent.value]);
+			}
 			current = current.parent;
 		}
 		return isForward ? path.reverse() : path;
@@ -146,10 +150,14 @@ export function leastSteps(target: number, max_src: number, allowedOperators: st
 					backwardQueue.push(newNode);
 
 					if (forwardVisited.has(prevValue)) {
-						const backwardPath = reconstructPath(newNode, false).reverse();
+						const backwardPath = reconstructPath(newNode, false);
 						const forwardNode = forwardVisited.get(prevValue)!;
 						const forwardPath = reconstructPath(forwardNode, true);
+
 						console.log('Calculation count: ' + calc_count);
+						console.log('Forward Path:', forwardPath);
+						console.log('Backward Path:', backwardPath);
+
 						return forwardPath.concat(backwardPath);
 					}
 				}
